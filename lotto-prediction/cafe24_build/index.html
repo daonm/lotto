@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>골프친구-독식 로또 당첨 예측 시스템</title>
+    <meta name="description" content="로또 명인의 비법을 기반으로 한 AI 당첨 번호 예측 시스템">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="auth-styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <!-- Background Animation -->
+    <div class="background-animation">
+        <div class="ball-bg ball-1"></div>
+        <div class="ball-bg ball-2"></div>
+        <div class="ball-bg ball-3"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-container">
+            <div class="header-left">
+                <h1 class="logo">🎯 골프친구-독식</h1>
+                <p class="subtitle">로또 당첨 예측 시스템</p>
+            </div>
+            <div class="header-right">
+                <!-- 비로그인 상태 -->
+                <div id="authButtons" class="auth-buttons">
+                    <button class="login-btn" id="loginBtn">로그인</button>
+                    <button class="signup-btn" id="signupBtn">회원가입</button>
+                </div>
+
+                <!-- 로그인 상태 -->
+                <div id="userMenu" class="user-menu" style="display: none;">
+                    <span class="user-name" id="userName">사용자</span>
+                    <button class="my-page-btn" id="myPageBtn">📊 마이페이지</button>
+                    <button class="logout-btn" id="logoutBtn">로그아웃</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+
+            <!-- Main Page (기본 화면) -->
+            <div id="mainPage">
+                <!-- Introduction Section -->
+                <section class="intro-section">
+                    <div class="intro-card">
+                        <h2>🎲 로또 명인의 비법을 코드로</h2>
+                        <p>최근 6개월간의 당첨 번호를 분석하고, 검증된 통계 규칙을 적용하여 높은 확률의 번호 조합을 생성합니다.</p>
+                        <div class="features">
+                            <div class="feature-item">
+                                <span class="feature-icon">📊</span>
+                                <span class="feature-text">6개월 데이터 분석</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">🔍</span>
+                                <span class="feature-text">7가지 필터링 규칙</span>
+                            </div>
+                            <div class="feature-item">
+                                <span class="feature-icon">✨</span>
+                                <span class="feature-text">AI 기반 조합 생성</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Statistics Section -->
+                <section class="statistics-section">
+                    <h2 class="section-title">📈 실시간 통계 정보</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">핵심 번호 (3-4회 등장)</div>
+                            <div class="stat-value" id="coreNumbers">분석 중...</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">지난주 당첨 번호</div>
+                            <div class="stat-value" id="lastWeekNumbers">분석 중...</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">제외 번호 (고빈도)</div>
+                            <div class="stat-value" id="excludeNumbers">분석 중...</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">분석 회차 수</div>
+                            <div class="stat-value" id="totalDraws">0회</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Generate Section -->
+                <section class="generate-section">
+                    <div class="generate-card">
+                        <h2 class="section-title">🎰 번호 조합 생성</h2>
+                        <p class="generate-description">생성할 조합 수를 선택하고 버튼을 클릭하세요</p>
+
+                        <div class="input-group">
+                            <label for="numCombinations">조합 수:</label>
+                            <input type="number" id="numCombinations" min="1" max="20" value="5" class="number-input">
+                        </div>
+
+                        <button class="generate-btn" id="generateBtn">
+                            <span class="btn-text">✨ 번호 생성하기</span>
+                        </button>
+
+                        <div class="loading" id="loading">
+                            <div class="spinner"></div>
+                            <p>AI가 최적의 조합을 생성 중입니다...</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Results Section -->
+                <section class="results-section" id="resultsSection" style="display: none;">
+                    <h2 class="section-title">🎯 생성된 조합</h2>
+                    <div class="results-info" id="resultsInfo"></div>
+                    <div class="combinations-grid" id="combinationsGrid"></div>
+                </section>
+            </div>
+
+            <!-- My Page (숨김) -->
+            <div id="myPage" style="display: none;">
+                <section class="my-page-section">
+                    <div class="section-header">
+                        <h2>👤 마이페이지</h2>
+                        <button id="backBtn" class="secondary-btn">← 뒤로가기</button>
+                    </div>
+
+                    <div class="mypage-controls">
+                        <div class="filter-group">
+                            <label for="drawFilter">회차 선택:</label>
+                            <select id="drawFilter">
+                                <option value="">전체</option>
+                            </select>
+                        </div>
+                        <button id="checkResultsBtn" class="primary-btn small">🏆 당첨 확인</button>
+                    </div>
+
+                    <div class="batch-controls">
+                        <div class="checkbox-wrapper">
+                            <input type="checkbox" id="selectAll">
+                            <label for="selectAll">전체 선택</label>
+                        </div>
+                        <div class="batch-actions">
+                            <button id="deleteSelectedBtn" class="danger-btn small" disabled>선택 삭제</button>
+                            <button id="deleteAllBtn" class="danger-btn small">전체 삭제</button>
+                        </div>
+                    </div>
+
+                    <div id="savedCombinationsGrid" class="combinations-grid">
+                        <!-- Saved combinations will be added here -->
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span id="closeModal" class="close">&times;</span>
+
+            <!-- Login Form -->
+            <div id="loginForm">
+                <h2>로그인</h2>
+                <form id="loginFormElement">
+                    <div class="form-group">
+                        <label>이메일</label>
+                        <input type="email" id="loginEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" id="loginPassword" required>
+                    </div>
+                    <button type="submit" class="primary-btn full-width">로그인</button>
+                </form>
+                <p class="auth-switch">계정이 없으신가요? <a href="#" id="showSignup">회원가입</a></p>
+            </div>
+
+            <!-- Signup Form -->
+            <div id="signupForm" style="display: none;">
+                <h2>회원가입</h2>
+                <form id="signupFormElement">
+                    <div class="form-group">
+                        <label>사용자명</label>
+                        <input type="text" id="signupUsername" required>
+                    </div>
+                    <div class="form-group">
+                        <label>이메일</label>
+                        <input type="email" id="signupEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" id="signupPassword" required>
+                    </div>
+                    <button type="submit" class="primary-btn full-width">회원가입</button>
+                </form>
+                <p class="auth-switch">이미 계정이 있으신가요? <a href="#" id="showLogin">로그인</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="modal" style="display: none;">
+        <div class="modal-content result-content">
+            <span id="closeResultModal" class="close">&times;</span>
+            <h2>🏆 당첨 결과 확인</h2>
+
+            <div class="winning-numbers-section">
+                <h3>이번 회차 당첨 번호</h3>
+                <div id="winningNumbersDisplay" class="lotto-balls center">
+                    <!-- Winning numbers will be added here -->
+                </div>
+            </div>
+
+            <div class="my-result-summary">
+                <h3>나의 당첨 현황</h3>
+                <div id="resultSummaryContent">
+                    <!-- Summary will be added here -->
+                </div>
+            </div>
+
+            <div class="result-actions">
+                <button id="confirmResultBtn" class="primary-btn">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2024 골프친구-독식 로또 예측 시스템. All rights reserved.</p>
+            <p class="disclaimer">※ 본 시스템은 통계적 분석을 기반으로 하며, 당첨을 보장하지 않습니다.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
